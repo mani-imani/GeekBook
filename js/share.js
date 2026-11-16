@@ -163,7 +163,9 @@ export function drawQuote(quote, book, { size = 'post', theme = 'paper' } = {}) 
   ctx.direction = 'ltr';
   ctx.textAlign = rtl ? 'right' : 'left';
   const top = size === 'story' ? 380 : 250;
-  ctx.fillText(rtl ? '«' : '“', rtl ? w - M + 14 : M - 14, top + (rtl ? 0 : 90));
+  // v1.0.3: the same kind of mark as English cards, mirrored for right-to-left (” opens a quote read from the right).
+  // The font's « looked like two parentheses at this size.
+  ctx.fillText(rtl ? '”' : '“', rtl ? w - M + 14 : M - 14, top + 90);
   ctx.globalAlpha = 1;
 
   // attribution block, measured first so the quote knows how much room it has
