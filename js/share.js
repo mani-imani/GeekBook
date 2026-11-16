@@ -44,16 +44,67 @@ function wrap(ctx, text, maxWidth) {
       line = w;
     }
     lines.push(line);
+    lines.ends = (lines.ends || new Set()).add(lines.length - 1);
   }
   return lines;
 }
 
-/** Draw wrapped text; x is the inline-start edge for the text's own direction. Returns the y after the block. */
-function drawText(ctx, lines, { x, y, lineHeight, rtl, width }) {
+/** Draw wrapped text; x is the inline-start edge for the text's own direction. Returns the y after the block.
+ *  With `justify` (v1.0.2), Persian text is set justified like a printed book: every line except the last line of a
+ *  paragraph is stretched to the full width by widening the spaces. Latin words that follow each other stay together
+ *  as one piece, so their order is kept. English quotes are left as they are: their lines are short and would get
+ *  big holes. A line that would need a gap wider than MAX_GAP spaces is left as it is. */
+const MAX_GAP = 4;   // widest gap, in spaces, a justified line may get
+function pieces(line) {
+  const out = [];
+  for (const w of line.split(' ').filter(Boolean)) {
+    const latin = /[A-Za-z]/.test(w);
+    if (latin && out.length && out[out.length - 1].latin) out[out.length - 1].text += ` ${w}`;
+    else out.push({ text: w, latin });
+  }
+  return out;
+}
+/** Gap (in spaces) each line would need; Infinity for a lone word that is not a paragraph end. */
+function worstGap(ctx, lines, ends, width) {
+  const space = ctx.measureText(' ').width;
+  let worst = 0;
+  lines.forEach((line, i) => {
+    if (ends.has(i)) return;
+    const pc = pieces(line);
+    if (pc.length < 2) { worst = Infinity; return; }
+    const used = pc.reduce((sum, p) => sum + ctx.measureText(p.text).width, 0);
+    worst = Math.max(worst, (width - used) / (pc.length - 1) / space);
+  });
+  return worst;
+}
+
+function drawText(ctx, lines, { x, y, lineHeight, rtl, width, justify = false, ends = new Set(), maxGap = MAX_GAP }) {
   ctx.direction = rtl ? 'rtl' : 'ltr';
   ctx.textAlign = rtl ? 'right' : 'left';
   const ax = rtl ? x + width : x;
-  for (const line of lines) { ctx.fillText(line, ax, y); y += lineHeight; }
+  const space = ctx.measureText(' ').width;
+  lines.forEach((line, i) => {
+    let done = false;
+    if (justify && rtl && !ends.has(i)) {
+      const pcs = pieces(line);
+      if (pcs.length > 1) {
+        const used = pcs.reduce((sum, pc) => sum + ctx.measureText(pc.text).width, 0);
+        const gap = (width - used) / (pcs.length - 1);
+        if (gap <= space * maxGap) {
+          let cx = ax;
+          for (const pc of pcs) {
+            const pw = ctx.measureText(pc.text).width;
+            if (pc.latin) { ctx.direction = 'ltr'; ctx.textAlign = 'left'; ctx.fillText(pc.text, cx - pw, y); ctx.direction = 'rtl'; ctx.textAlign = 'right'; }
+            else ctx.fillText(pc.text, cx, y);
+            cx -= pw + gap;
+          }
+          done = true;
+        }
+      }
+    }
+    if (!done) ctx.fillText(line, ax, y);
+    y += lineHeight;
+  });
   return y;
 }
 
@@ -122,19 +173,28 @@ export function drawQuote(quote, book, { size = 'post', theme = 'paper' } = {}) 
   const areaTop = top + 40, areaBottom = metaTop - 60;
 
   // quote text: the largest size that fits
-  let fs = 68, lines, lh;
+  // Persian quotes are justified; when one size breaks the lines so that a line would need wide gaps, a few
+  // slightly smaller sizes are tried and the first one whose lines all justify evenly is kept (v1.0.2).
+  let fs = 68, lines, lh, maxGap = MAX_GAP, first = null;
   for (; fs >= 30; fs -= 2) {
     ctx.font = `600 ${fs}px ${FONT}`;
     lh = Math.round(fs * (rtl ? 1.85 : 1.55));
     lines = wrap(ctx, quote.text, inner);
-    if (lines.length * lh <= areaBottom - areaTop) break;
+    if (lines.length * lh > areaBottom - areaTop) continue;
+    if (!rtl) break;
+    if (!first) first = { fs, lines, lh };
+    const lone = lines.length > 1 && pieces(lines[lines.length - 1]).length < 2;   // one word alone on the last line
+    if (worstGap(ctx, lines, new Set(lines.ends), inner) <= MAX_GAP && !lone) break;
+    if (fs <= first.fs - 10) { ({ fs, lines, lh } = first); maxGap = 6; ctx.font = `600 ${fs}px ${FONT}`; break; }
   }
+  if (fs < 30 && first) { ({ fs, lines, lh } = first); maxGap = 6; ctx.font = `600 ${fs}px ${FONT}`; }
   const maxLines = Math.max(1, Math.floor((areaBottom - areaTop) / lh));
-  if (lines.length > maxLines) { lines = lines.slice(0, maxLines); lines[maxLines - 1] = lines[maxLines - 1].replace(/.{0,3}$/, '…'); }
+  const ends = new Set(lines.ends);
+  if (lines.length > maxLines) { lines = lines.slice(0, maxLines); lines[maxLines - 1] = lines[maxLines - 1].replace(/.{0,3}$/, '…'); ends.add(maxLines - 1); }
   const blockH = lines.length * lh;
   const y0 = areaTop + Math.max(0, (areaBottom - areaTop - blockH) / 2) + fs;
   ctx.fillStyle = t.text;
-  drawText(ctx, lines, { x: M, y: y0, lineHeight: lh, rtl, width: inner });
+  drawText(ctx, lines, { x: M, y: y0, lineHeight: lh, rtl, width: inner, justify: true, ends, maxGap });
 
   // rule + book
   const bookRtl = isRtl(book.title);

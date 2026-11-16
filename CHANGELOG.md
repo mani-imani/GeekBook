@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.2 · Nov 2026
+- Stats: in "reading days" and "pages per month" time now runs left to right (older on the left, today and this month on the right).
+- Reading-days map: the whole year fits on wide screens; on phones only whole weeks are shown, so no column is cut in half at an edge; the frame around today is no longer clipped; days still to come are no longer drawn; month names no longer overlap.
+- Quote cards: Persian quotes are justified like a printed book (the last line of each paragraph stays as it is). When a size would leave wide gaps or one word alone on the last line, a slightly smaller size is used. English quotes are unchanged.
+
 ## v1.0.1 · Nov 2026
 - Empty text fields are right-to-left: the Persian example text and the caret used to sit on the left side. Once you type, the field still follows the direction of your text, so a Latin title reads correctly.
 

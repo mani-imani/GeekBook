@@ -569,26 +569,29 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
 .goal { padding: 8px 0; }
 .goal-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 6px; font-weight: 600; }
 .heat { display: flex; gap: 6px; margin-top: 10px; --cell: 13px; --gap: 3px; }
+.heat-days { padding-top: 25px !important; }   /* lines up with the grid inside the scroller's 3px padding */
 .heat-days { display: grid; grid-template-rows: repeat(7, var(--cell)); gap: var(--gap); padding-top: 22px; font-size: .62rem; line-height: var(--cell); flex: none; }
-.heat-scroll { flex: 1; min-width: 0; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; border-radius: 6px; }
+.heat-scroll { flex: 0 1 auto; max-width: 100%; min-width: 0; padding: 3px; scroll-snap-type: x mandatory; scroll-padding-inline: 3px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; border-radius: 6px; }
 .heat-scroll::-webkit-scrollbar { display: none; }
 .heat-inner { width: max-content; }
 .heat-months { display: grid; grid-auto-flow: column; grid-auto-columns: var(--cell); gap: var(--gap); height: 22px; font-size: .66rem; color: var(--muted); }
 .heat-month { white-space: nowrap; overflow: visible; }
 .heat-grid { display: grid; grid-template-rows: repeat(7, var(--cell)); grid-auto-flow: column; grid-auto-columns: var(--cell); gap: var(--gap); }
-.heat-cell { display: block; width: var(--cell, 13px); height: var(--cell, 13px); border-radius: 3.5px; background: var(--surface-2); }
+.heat-cell { display: block; flex: none; width: var(--cell, 13px); height: var(--cell, 13px); border-radius: calc(var(--cell, 13px) * .26); background: var(--surface-2); }
 .heat-cell[data-l="1"] { background: color-mix(in srgb, var(--accent) 28%, var(--surface-2)); }
 .heat-cell[data-l="2"] { background: color-mix(in srgb, var(--accent) 52%, var(--surface-2)); }
 .heat-cell[data-l="3"] { background: color-mix(in srgb, var(--accent) 78%, var(--surface-2)); }
 .heat-cell[data-l="4"] { background: var(--accent); }
-.heat-cell.is-future { opacity: .35; }
+.heat-cell.is-future { visibility: hidden; }   /* days still to come: room kept, nothing drawn */
+.heat-grid > .heat-cell:nth-child(7n+1) { scroll-snap-align: start; }   /* swiping stops on whole weeks */
+.heat-month { white-space: nowrap; }
 .heat-cell.is-today { box-shadow: 0 0 0 1.5px var(--text); }
 .heat-legend { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 10px; direction: rtl; }
 .heat-legend span { margin-inline: 4px; }
-.months-scroll { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin-top: 10px; }
+.months-scroll { scroll-snap-type: x mandatory; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin-top: 10px; }
 .months-scroll::-webkit-scrollbar { display: none; }
-.months { display: grid; grid-auto-flow: column; grid-auto-columns: 52px; gap: 6px; height: 180px; width: max-content; min-width: 100%; }
-.month { display: grid; grid-template-rows: 18px 1fr 20px; justify-items: center; min-width: 0; }
+.months { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(48px, 1fr); gap: 6px; height: 180px; width: max-content; min-width: 100%; }
+.month { scroll-snap-align: start; display: grid; grid-template-rows: 18px 1fr 20px; justify-items: center; min-width: 0; }
 .month-val { font-size: .7rem; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .month-bar-wrap { display: flex; align-items: flex-end; width: 100%; max-width: 30px; }
 .month-bar { display: block; width: 100%; height: max(var(--h), 3px); border-radius: 6px 6px 3px 3px; background: color-mix(in srgb, var(--accent) 55%, var(--surface-2)); transform-origin: bottom; animation: grow .55s var(--ease) both; animation-delay: var(--d, 0ms); }
