@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.0.1 · Nov 2026
+- Empty text fields are right-to-left: the Persian example text and the caret used to sit on the left side. Once you type, the field still follows the direction of your text, so a Latin title reads correctly.
+
 ## v1.0.0 · Nov 2026
 - First version: library with typed-in book details and colored text covers (no cover images), five statuses (reading, unread, read, dropped, to buy), "where I stopped" with page and a one-line note, page-based progress with an estimated finish, automatic start and finish dates.
 - To-buy list with price and priority, custom lists, lending log.

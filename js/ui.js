@@ -208,8 +208,19 @@ export function confirmDialog({ title, message, ok = 'تأیید', cancel = 'ا�
 let fieldSeq = 0;
 
 /**
- * A labelled field. Free text fields follow the direction of what is typed (dir="auto"),
- * so a Latin title in a Persian interface still reads correctly.
+ * Direction of a free text field. With text in it, the text decides (dir="auto"), so a Latin title in a
+ * Persian interface still reads correctly. Empty, the field is right-to-left like the rest of the app:
+ * dir="auto" on an empty field falls back to left-to-right, which put the Persian placeholder and the
+ * caret on the left side.
+ */
+function followText(input) {
+  const sync = () => { input.dir = input.value.trim() ? 'auto' : 'rtl'; };
+  input.addEventListener('input', sync);
+  sync();
+}
+
+/**
+ * A labelled field. Free text fields follow the direction of what is typed (see followText).
  * type: text | number | area
  */
 export function field({ label, value = '', placeholder = '', type = 'text', hint, rows = 3, required = false, maxlength, autofocus = false }) {
@@ -217,15 +228,17 @@ export function field({ label, value = '', placeholder = '', type = 'text', hint
   const common = { id, class: 'input', placeholder, autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false', autofocus: autofocus || null, maxlength: maxlength || null };
   let input;
   if (type === 'area') {
-    input = h('textarea', { ...common, rows, dir: 'auto' });
+    input = h('textarea', { ...common, rows });
     input.value = value ?? '';
+    followText(input);
   } else if (type === 'number') {
     // text + numeric keypad: lets Persian digits in, and iOS shows the number pad
     input = h('input', { ...common, type: 'text', inputmode: 'numeric', class: 'input input-num', dir: 'ltr' });
     input.value = value == null || value === '' ? '' : String(value);
   } else {
-    input = h('input', { ...common, type: 'text', dir: 'auto', enterkeyhint: 'next' });
+    input = h('input', { ...common, type: 'text', enterkeyhint: 'next' });
     input.value = value ?? '';
+    followText(input);
   }
   const el = h('div', { class: 'field' },
     h('label', { class: 'field-label', for: id }, label, required ? null : h('span', { class: 'field-opt' }, 'اختیاری')),

@@ -56,7 +56,7 @@ function genreList() {
 function suggestField(opts, suggestions) {
   const f = field(opts);
   if (suggestions.length) {
-    add(f.el, h('div', { class: 'suggest-row' }, ...suggestions.map((s) => h('button', { type: 'button', class: 'chip chip-small', onclick: () => { f.input.value = s; } }, s))));
+    add(f.el, h('div', { class: 'suggest-row' }, ...suggestions.map((s) => h('button', { type: 'button', class: 'chip chip-small', onclick: () => { f.input.value = s; f.input.dispatchEvent(new Event('input')); } }, s))));
   }
   return f;
 }

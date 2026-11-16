@@ -8,7 +8,7 @@
 <p align="center">A companion for people who read paper books: where I stopped, what I read, and what stayed with me. Persian, right-to-left, fully offline.</p>
 
 <p align="center"><a href="https://mani-imani.github.io/GeekBook/"><b>mani-imani.github.io/GeekBook</b></a></p>
-<p align="center"><a href="#فارسی">فارسی</a> · <a href="#english">English</a> · <code>v1.0.0</code></p>
+<p align="center"><a href="#فارسی">فارسی</a> · <a href="#english">English</a> · <code>v1.0.1</code></p>
 
 ---
 
