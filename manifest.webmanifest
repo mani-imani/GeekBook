@@ -1,0 +1,24 @@
+{
+  "name": "GeekBook",
+  "short_name": "GeekBook",
+  "description": "همراه کتاب‌خوان‌های کاغذی: کجا ماندم، چه خواندم و چه یادم مانده. ساده، فارسی و آفلاین.",
+  "lang": "fa",
+  "dir": "rtl",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F4F4F0",
+  "theme_color": "#F4F4F0",
+  "categories": ["books", "education", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "کتابخانه", "url": "./#/library", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "مرور", "url": "./#/review", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

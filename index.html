@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>GeekBook</title>
+  <meta name="description" content="همراه کتاب‌خوان‌های کاغذی: کجا ماندم، چه خواندم و چه یادم مانده. ساده، فارسی و آفلاین.">
+  <meta name="theme-color" content="#F4F4F0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="GeekBook">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="preload" href="./fonts/Vazirmatn-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./css/style.css">
+  <script>
+    // apply theme before first paint to avoid a flash
+    try {
+      const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    } catch (e) {}
+  </script>
+  <script type="module" src="./js/main.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">رفتن به محتوا</a>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#/" aria-label="GeekBook، خانه">
+        <img src="./icons/icon-192.png" alt="" width="28" height="28">
+        <span class="brand-name">Geek<b>Book</b><i></i></span>
+      </a>
+      <span class="today" id="today"></span>
+    </header>
+    <nav class="tabbar" id="nav" aria-label="بخش‌ها"></nav>
+    <main id="main" tabindex="-1"></main>
+  </div>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <noscript><p style="padding:2rem">GeekBook برای کار کردن به جاوااسکریپت نیاز دارد.</p></noscript>
+</body>
+</html>
